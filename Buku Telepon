@@ -1,0 +1,199 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <iomanip>
+
+class Contact {
+public:
+    std::string name;
+    std::string phone;
+    
+    Contact() : name(""), phone("") {}
+    
+    Contact(const std::string& name, const std::string& phone) : name(name), phone(phone) {}
+};
+
+std::vector<Contact> contacts;
+
+void displayMainMenu() {
+    std::cout << "=========BUKU TELEPON=========" << std::endl;
+    std::cout << "\nDibuat Oleh Kelompok 4" << std::endl;
+    std::cout << "Kelas H Struktur Data" << std::endl;
+    std::cout << "________________________" << std::endl;
+    std::cout << "\n*------MENU PILIHAN------*" << std::endl;
+    std::cout << "1. Tampilkan Data Buku Telepon" << std::endl;
+    std::cout << "2. Cari Nama Berdasarkan Nomor" << std::endl;
+    std::cout << "3. Cari Nomor Berdasarkan Nama" << std::endl;
+    std::cout << "4. Keluar" << std::endl;
+    std::cout << "\nMasukkan pilihan = ";
+}
+
+void displayContactList() {
+    std::cout << "\n=========BUKU TELEPON=========" << std::endl;
+    std::cout << "\n-------Data Buku Telepon-------" << std::endl;
+    if (contacts.empty()) {
+        std::cout << "\n>Tidak Ada Kontak<" << std::endl;
+    } else {
+        size_t maxNameWidth = 0;
+        size_t maxPhoneWidth = 0;
+        for (const auto& contact : contacts) {
+            maxNameWidth = std::max(maxNameWidth, contact.name.length());
+            maxPhoneWidth = std::max(maxPhoneWidth, contact.phone.length());
+        }
+
+        std::cout << std::left << std::setw(maxNameWidth + 3) << "Nama" << std::setw(maxPhoneWidth + 3) << "Nomor" << std::endl;
+        std::cout << std::setfill('-') << std::setw(maxNameWidth + maxPhoneWidth + 6) << "" << std::setfill(' ') << std::endl;
+
+        for (const auto& contact : contacts) {
+            std::cout << std::left << std::setw(maxNameWidth + 3) << contact.name << std::setw(maxPhoneWidth + 3) << contact.phone << std::endl;
+        }
+    }
+
+    std::cout << "\n1. Tambahkan Kontak" << std::endl;
+    std::cout << "2. Hapus Kontak" << std::endl;
+    std::cout << "3. Kembali ke Menu Utama" << std::endl;
+    std::cout << "\nMasukan pilihan = ";
+}
+
+void addContact() {
+    Contact newContact;
+    std::cout << "Masukkan Nama = ";
+    std::cin.ignore();
+    std::getline(std::cin, newContact.name);
+    std::cout << "Masukkan Nomor = ";
+    std::cin >> newContact.phone;
+    system("cls");
+    contacts.push_back(newContact);
+    std::cout << "\nKontak Berhasil Dimasukan\n" << std::endl;
+}
+
+void deleteContact() {
+    std::string nameToDelete;
+    std::cout << "Masukkan Nama Yang Ingin Dihapus = ";
+    std::cin.ignore();
+    std::getline(std::cin, nameToDelete);
+    auto it = std::find_if(contacts.begin(), contacts.end(), [nameToDelete](const Contact& c) {
+        return c.name == nameToDelete;
+    });
+    system("cls");
+    if (it != contacts.end()) {
+        contacts.erase(it);
+        std::cout << "\nKontak Berhasil Dihapus\n" << std::endl;
+    } else {
+        std::cout << "\nKontak Tidak Ditemukan\n" << std::endl;
+    }
+}
+
+void searchByName() {
+    system("cls");
+    std::string nameToSearch;
+    std::cout << "Masukkan Nama Yang Ingin Dicari = ";
+    std::cin.ignore();
+    std::getline(std::cin, nameToSearch);
+    auto it = std::find_if(contacts.begin(), contacts.end(), [nameToSearch](const Contact& c) {
+        return c.name == nameToSearch;
+    });
+    char searchAgain;
+    if (it != contacts.end()) {
+        std::cout << "\nKontak Ditemukan" << std::endl;
+        std::cout << it->name << " = " << it->phone << std::endl;
+        std::cout << "\nCari Kontak Lain? (y/n) = ";
+        std::cin >> searchAgain;
+        if (searchAgain == 'y' || searchAgain == 'Y') {
+            searchByName();
+        } else {
+            return;
+        }
+    } else {
+        std::cout << "\nKontak Tidak Ditemukan" << std::endl;
+        std::cout << "\nCari Kontak Lain? (y/n) = ";
+        std::cin >> searchAgain;
+        if (searchAgain == 'y' || searchAgain == 'Y') {
+            searchByName();
+        } else {
+            return;
+        }
+    }
+}
+
+void searchByPhone() {
+    system("cls");
+    std::string phoneToSearch;
+    std::cout << "Masukkan Nomor Yang Ingin Dicari = ";
+    std::cin >> phoneToSearch;
+    auto it = std::find_if(contacts.begin(), contacts.end(), [phoneToSearch](const Contact& c) {
+        return c.phone == phoneToSearch;
+    });
+    char searchAgain;
+    if (it != contacts.end()) {
+        std::cout << "\nKontak Ditemukan" << std::endl;
+        std::cout << phoneToSearch << " = " << it->name << std::endl;
+        std::cout << "\nCari Kontak Lain? (y/n) = ";
+        std::cin >> searchAgain;
+        if (searchAgain == 'y' || searchAgain == 'Y') {
+            searchByPhone();
+        } else {
+            return;
+        }
+    } else {
+        std::cout << "\nKontak Tidak Ditemukan" << std::endl;
+        std::cout << "\nCari Kontak Lain? (y/n) = ";
+        std::cin >> searchAgain;
+        if (searchAgain == 'y' || searchAgain == 'Y') {
+            searchByPhone();
+        } else {
+            return;
+        }
+    }
+}
+
+int main() {
+    while (true) {
+        system("cls");
+        displayMainMenu();
+        int choice;
+        std::cin >> choice;
+        system("cls");
+        switch (choice) {
+            case 1:
+                while (true) {
+                    displayContactList();
+                    int subChoice;
+                    std::cin >> subChoice;
+                    switch (subChoice) {
+                        case 1:
+                            addContact();
+                            break;
+                        case 2:
+                            deleteContact();
+                            break;
+                        case 3:
+                            break;
+                        default:
+                            std::cout << "\nPilihan Tidak Valid. Silakan Coba Lagi." << std::endl;
+                    }
+                    if (subChoice == 3) {
+                        break;
+                    }
+                }
+                break;
+            case 2:
+                searchByName();
+                break;
+            case 3:
+                searchByPhone();
+                break;
+            case 4:
+                std::cout << "\nHentikan Program? (y/n) = ";
+                char terminateChoice;
+                std::cin >> terminateChoice;
+                if (terminateChoice == 'y' || terminateChoice == 'Y') {
+                    return 0;
+                }
+                break;
+            default:
+                std::cout << "\nPilihan Tidak Valid. Silakan Coba Lagi." << std::endl;
+        }
+    }
+    return 0;
+}
